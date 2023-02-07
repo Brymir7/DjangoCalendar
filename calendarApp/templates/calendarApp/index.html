@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>BrymirNotes</title>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="{% static 'calendarApp/reset.css' %}"/>
+    <link rel="stylesheet" href="{% static 'calendarApp/style.css' %}"/>
+</head>
+<body>
+  <nav class="navbar">
+    <a class="navbar-brand" href="#">Note Taking System</a>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Notes</a>
+      </li>
+    </ul>
+  </nav>
+  <form>
+  </form>
+  
+  {% if months %}
+    {% for month in months %}
+      <h1>{{ month.month_name }}</h1>
+      <div class="month">
+        {% for day in month.days.all %}
+          <div class="day">
+            <h2>{{ day.day_name }}</h2>
+            <a href="{% url 'note-create' day.id %}"> <div class="add-note">
+              <button>Add Note</button> </div>
+            </a>
+            {% for note in day.attached_notes.all %}
+                <div class="note">
+
+                  <h3>{{ note.note_name }}</h3>
+                  <p>{{ note.note_text }}</p>
+                        
+                  <div class="note-actions">  <a href="{% url 'note-update' note.id %}">
+                    
+                  <button>Edit</button> 
+                </a>
+                <form action="{% url 'note-delete' note.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="_method" value="DELETE"/>
+                    <button type="submit">Delete</button>
+                  </form>                  
+                  </div>
+                </div>
+              
+            {% endfor %}
+            {% if not day.attached_notes.all %}
+          <p class="no-notes">No notes for this day so far</p>
+        {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+    {% else %}
+    <p>No Month right now.</p>
+  {% endif %}
+  </div>
+</body>
+</html>
+
